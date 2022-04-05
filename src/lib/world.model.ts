@@ -16,6 +16,8 @@ export class World {
 			.fill(null)
 			.map(() => Array(this.height).fill(this.initialState));
 
+		// (globalThis as any).world = this;
+
 		return this;
 	}
 
