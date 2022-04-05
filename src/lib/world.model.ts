@@ -1,5 +1,5 @@
 import type { RuleSet } from './rules';
-import { Storage } from './storage';
+import type { Storage } from './storage';
 
 export class World {
 	public cells: string[][];
@@ -29,10 +29,16 @@ export class World {
 		this.cells = restoredCells;
 	}
 
+	clear() {
+		this.cells = Array(this.width)
+			.fill(null)
+			.map(() => Array(this.height).fill(this.initialState));
+	}
+
 	get(x: number, y: number) {
 		const { width, height } = this;
-		let x2 = x < 0 ? width + x : x;
-		let y2 = y < 0 ? height + y : y;
+		const x2 = x < 0 ? width + x : x;
+		const y2 = y < 0 ? height + y : y;
 		return this.cells[x2 % width][y2 % height];
 	}
 

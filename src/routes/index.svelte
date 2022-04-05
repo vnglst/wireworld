@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { onMount } from 'svelte';
 	import { WorldBuilder } from '../lib/world.model';
 	import { conway, wireWorld } from '../lib/rules';
@@ -22,8 +22,8 @@
 	let isDrawing = false;
 	let isPlaying = false;
 	let speed = 0;
-	let ctx;
-	let canvas;
+	let ctx: CanvasRenderingContext2D;
+	let canvas: HTMLCanvasElement;
 
 	const drawWorld = () => {
 		const startX = 0;
@@ -52,7 +52,11 @@
 		}
 	};
 
-	const getMousePos = (e) => {
+	const getMousePos = (
+		e: MouseEvent & {
+			currentTarget: EventTarget & HTMLCanvasElement;
+		}
+	) => {
 		const rect = canvas.getBoundingClientRect();
 		const scaleX = canvas.width / rect.width / SQUARE;
 		const scaleY = canvas.height / rect.height / SQUARE;
@@ -63,7 +67,7 @@
 	};
 
 	onMount(() => {
-		canvas = document.getElementById('canvas');
+		canvas = document.getElementById('canvas') as HTMLCanvasElement;
 		ctx = canvas.getContext('2d');
 		ctx.fillStyle = '#323232';
 		ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
@@ -80,9 +84,7 @@
 		on:mousedown={(e) => {
 			isDrawing = true;
 			const { x, y } = getMousePos(e);
-			// if cell is not clear, clear it when clicking
-			const shouldClear = world.get(x, y) !== 'e';
-			world.update(x, y, shouldClear ? 'e' : drawMode);
+			world.update(x, y, drawMode);
 			drawWorld();
 		}}
 		on:mouseup={() => {
@@ -115,11 +117,12 @@
 			<button
 				class="link-btn"
 				on:click={() => {
-					world.create();
+					// make world empty
+					world.clear();
 					drawWorld();
 				}}>Clear</button
 			>
-			<button class="link-btn" on:click={() => world.save()}>Save</button>
+			<button class="link-btn" on:click={world.save}>Save</button>
 		</div>
 	</div>
 </main>
