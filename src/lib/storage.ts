@@ -6,7 +6,7 @@ export class Storage {
 	save(obj: unknown) {
 		const compressed = stringify(obj);
 		const encoded = encodeURIComponent(compressed);
-		const url = new URL(location.origin);
+		const url = new URL(location.origin + location.pathname);
 		url.searchParams.set(this.key, encoded);
 		history.pushState(null, null, url);
 	}
